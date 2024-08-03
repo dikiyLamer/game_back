@@ -1,9 +1,0 @@
-CREATE USER leonumeno WITH PASSWORD 'leonumeno' CREATEDB;
-CREATE DATABASE leonumeno
-    WITH
-    OWNER = leonumeno
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'en_US.utf8'
-    LC_CTYPE = 'en_US.utf8'
-    TABLESPACE = pg_default
-    CONNECTION LIMIT = -1;
