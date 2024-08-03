@@ -1,0 +1,38 @@
+networks:
+  dev:
+services:
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - './nginx.conf:/etc/nginx/nginx.conf'
+    depends_on:
+      - backend
+    networks:
+      - dev
+
+  postgres:
+    image: postgres:15.1
+    volumes:
+      - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+      - postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: leonumeno
+      POSTGRES_PASSWORD: leonumeno
+      POSTGRES_DB: leonumeno
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    networks:
+      - dev
+
+  backend:
+    build:
+      context: ./
+    networks:
+      - dev
+
+volumes:
+  postgres:
