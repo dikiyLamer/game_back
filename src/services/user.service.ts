@@ -27,7 +27,7 @@ export const getUser = async (req: Request, res: Response) => {
 export const createUser = async (req: Request, res: Response) => {
   try {
     const newUser = await usersRepository.save(req.body as User);
-    res.send({ id: newUser.id });
+    res.send(newUser);
   } catch (e) {
     res.writeHead(400, { 'Content-Type': 'text/plain' });
     res.end(e);
