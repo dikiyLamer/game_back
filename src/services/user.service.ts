@@ -6,7 +6,7 @@ const usersRepository = AppDataSource.getRepository(User);
 
 export const getUsers = async (req: Express.Request, res: Response) => {
   try {
-    const users = await usersRepository.find();
+    const users = await usersRepository.find({ order: { record: 'DESC' } });
     res.send(users);
   } catch (e) {
     res.writeHead(400, { 'Content-Type': 'text/plain' });
