@@ -14,4 +14,6 @@ export class User {
   language_code: string;
   @Column()
   allows_write_to_pm: boolean;
+  @Column({ nullable: true })
+  record: number;
 }
