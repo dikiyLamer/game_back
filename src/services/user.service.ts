@@ -4,7 +4,20 @@ import { User } from '../entities/user.entity';
 
 const usersRepository = AppDataSource.getRepository(User);
 
-export const getUsers = async (req: Express.Request, res: Response) => {
+export const login = async (req: Request, res: Response) => {
+  try {
+    console.log(req.params.initData);
+    const searchParams = new URLSearchParams(req.params.initData);
+    console.log(searchParams.entries());
+
+    res.send('goof');
+  } catch (e) {
+    res.writeHead(400, { 'Content-Type': 'text/plain' });
+    res.end(e);
+  }
+};
+
+export const getUsers = async (req: Request, res: Response) => {
   try {
     const users = await usersRepository.find({ order: { record: 'DESC' } });
     res.send(users);
