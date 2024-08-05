@@ -20,6 +20,7 @@ export const login = async (req: Request, res: Response) => {
     const secretKey = crypto.createHmac('sha256', 'webAppData').update(process.env.TOKEN!).digest();
     const signature = crypto.createHmac('sha256', secretKey).update(checkString).digest('hex');
     console.log('signature', signature);
+    console.log('hash', data.hash);
 
     res.send('goof');
   } catch (e) {
