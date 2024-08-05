@@ -17,7 +17,7 @@ export const login = async (req: Request, res: Response) => {
       .join('\n');
 
     console.log('TOKEN', process.env.TOKEN);
-    const secretKey = crypto.createHmac('sha256', 'webAppData').update(process.env.TOKEN!).digest();
+    const secretKey = crypto.createHmac('sha256', 'WebAppData').update(process.env.TOKEN!).digest();
     const signature = crypto.createHmac('sha256', secretKey).update(checkString).digest('hex');
     console.log('signature', signature);
     console.log('hash', data.hash);
