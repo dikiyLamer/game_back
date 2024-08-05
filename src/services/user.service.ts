@@ -6,9 +6,9 @@ const usersRepository = AppDataSource.getRepository(User);
 
 export const login = async (req: Request, res: Response) => {
   try {
-    console.log(req.params.initData);
+    console.log(req.params);
     const searchParams = new URLSearchParams(req.params.initData);
-    console.log(searchParams.entries());
+    console.log(searchParams);
 
     res.send('goof');
   } catch (e) {
