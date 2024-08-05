@@ -1,14 +1,25 @@
 import { Request, Response } from 'express';
 import { AppDataSource } from '../db/config';
 import { User } from '../entities/user.entity';
+import crypto from 'crypto';
 
 const usersRepository = AppDataSource.getRepository(User);
 
 export const login = async (req: Request, res: Response) => {
   try {
-    console.log(req.body.initData);
     const searchParams = new URLSearchParams(req.body.initData);
-    console.log(searchParams);
+    const data = Object.fromEntries(searchParams.entries());
+
+    const checkString = Object.keys(data)
+      .filter((key) => key !== 'hash')
+      .map((key) => `${key}=${data[key]}`)
+      .sort()
+      .join('\n');
+
+    console.log('TOKEN', process.env.TOKEN);
+    const secretKey = crypto.createHmac('sha256', 'webAppData').update(process.env.TOKEN!).digest();
+    const signature = crypto.createHmac('sha256', secretKey).update(checkString).digest('hex');
+    console.log('signature', signature);
 
     res.send('goof');
   } catch (e) {

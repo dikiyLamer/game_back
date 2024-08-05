@@ -5,8 +5,10 @@ import cors from 'cors';
 import 'reflect-metadata';
 import { usersRouter } from './controllers/users.controller';
 import { AppDataSource } from './db/config';
+import { config } from 'dotenv';
 
 const app = express();
+config();
 const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json({ limit: '5mb' }));
