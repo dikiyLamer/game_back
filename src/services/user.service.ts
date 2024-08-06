@@ -6,8 +6,6 @@ const usersRepository = AppDataSource.getRepository(User);
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
-    console.log('req.cookies', req.cookies);
-
     const users = await usersRepository.find({ order: { record: 'DESC' } });
     res.send(users);
   } catch (e) {
@@ -18,8 +16,6 @@ export const getUsers = async (req: Request, res: Response) => {
 
 export const getUser = async (req: Request, res: Response) => {
   try {
-    console.log('req.cookies', req.cookies);
-
     const user = await usersRepository.findOne({ where: { id: Number(req.params.id) } });
     res.send(user);
   } catch (e) {
@@ -30,8 +26,6 @@ export const getUser = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    console.log('req.cookies', req);
-
     const user = await usersRepository.findOne({ where: { id: req.body.id } });
     if (user) {
       res.send(user);
