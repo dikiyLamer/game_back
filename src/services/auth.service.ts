@@ -27,7 +27,7 @@ export const login = async (req: Request, res: Response) => {
       });
 
       const refreshToken = jwt.sign(data, process.env.JWT_SECRET ?? '', {
-        expiresIn: '2m',
+        expiresIn: '10m',
       });
 
       res.cookie(refreshTokenNameInCookies, refreshToken, {
