@@ -29,12 +29,13 @@ export const login = async (req: Request, res: Response) => {
       const refreshToken = jwt.sign(data, process.env.JWT_SECRET ?? '', {
         expiresIn: '10m',
       });
+      console.log(ttlRefresh);
 
       res.cookie(refreshTokenNameInCookies, refreshToken, {
         expires: ttlRefresh,
-        httpOnly: true,
+        httpOnly: false,
         secure: true,
-        sameSite: false,
+        sameSite: 'none',
       });
 
       res.send({ accessToken });
