@@ -53,6 +53,7 @@ export const update = (req: Request, res: Response) => {
     const accessToken = jwt.sign(data, process.env.JWT_SECRET ?? '', { expiresIn: '1m' });
     res.send({ accessToken });
   } catch (e) {
+    console.log(e);
     res.status(401).send('Not authorized');
   }
 };
