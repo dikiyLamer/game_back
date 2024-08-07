@@ -33,6 +33,8 @@ export const login = async (req: Request, res: Response) => {
       res.cookie(refreshTokenNameInCookies, refreshToken, {
         expires: ttlRefresh,
         httpOnly: true,
+        secure: true,
+        sameSite: false,
       });
 
       res.send({ accessToken });
