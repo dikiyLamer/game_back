@@ -15,11 +15,7 @@ config();
 const PORT = process.env.PORT || 3000;
 app.use(
   cors({
-    origin: [
-      'https://leonumeno.web.app',
-      'https://web.telegram.org/',
-      'http://192.168.119.71:9001',
-    ],
+    origin: ['https://leonumeno.web.app', 'http://192.168.119.71:9001'],
     credentials: true,
   })
 );

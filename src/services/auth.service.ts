@@ -2,6 +2,12 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { refreshTokenNameInCookies } from '../constants/constants';
+import { AppDataSource } from '../db/config';
+import { Token } from '../entities/token.entity';
+import { User } from '../entities/user.entity';
+
+const tokenRepository = AppDataSource.getRepository(Token);
+const usersRepository = AppDataSource.getRepository(User);
 
 export const login = async (req: Request, res: Response) => {
   try {
@@ -29,14 +35,17 @@ export const login = async (req: Request, res: Response) => {
       const refreshToken = jwt.sign(data, process.env.JWT_SECRET ?? '', {
         expiresIn: '10m',
       });
-      console.log(ttlRefresh);
+      console.log('data.user', data.user);
 
-      res.cookie(refreshTokenNameInCookies, refreshToken, {
-        expires: ttlRefresh,
-        httpOnly: false,
-        secure: true,
-        sameSite: 'none',
-      });
+      let newUser = await usersRepository.findOne({ where: { id: data.user.id } });
+
+      if (!newUser) {
+        newUser = await usersRepository.save(data.user);
+      }
+      const newToken = new Token();
+      newToken.token = refreshToken;
+      newToken.user = newUser!;
+      await tokenRepository.save(newToken);
 
       res.send({ accessToken });
       return;
@@ -47,14 +56,17 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-export const update = (req: Request, res: Response) => {
+export const update = async (req: Request, res: Response) => {
   const data = JSON.parse(JSON.stringify(req.query));
-  const refreshToken = req.cookies[refreshTokenNameInCookies];
+  const refreshToken = await tokenRepository.findOne({
+    where: { user: { id: data.user.id } },
+    relations: { user: true },
+  });
+  console.log('user', data.user);
   console.log('refreshToken', refreshToken);
-  console.log('req.cookies', req.cookies);
 
   try {
-    jwt.verify(refreshToken, process.env.JWT_SECRET ?? '');
+    jwt.verify(refreshToken?.token ?? '', process.env.JWT_SECRET ?? '');
     const accessToken = jwt.sign(data, process.env.JWT_SECRET ?? '', { expiresIn: '1m' });
     res.send({ accessToken });
   } catch (e) {
