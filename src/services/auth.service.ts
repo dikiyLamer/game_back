@@ -47,6 +47,8 @@ export const login = async (req: Request, res: Response) => {
 export const update = (req: Request, res: Response) => {
   const data = JSON.parse(JSON.stringify(req.query));
   const refreshToken = req.cookies[refreshTokenNameInCookies];
+  console.log('refreshToken', refreshToken);
+  console.log('req.cookies', req.cookies);
 
   try {
     jwt.verify(refreshToken, process.env.JWT_SECRET ?? '');
