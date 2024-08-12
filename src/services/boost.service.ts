@@ -17,6 +17,8 @@ export const updateBoost = async (req: Request, res: Response) => {
     const newBoost = await boostRepository.save(boost);
     res.send(newBoost);
   } catch (e) {
+    console.log(e);
+
     res.send(e);
   }
 };

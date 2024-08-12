@@ -71,6 +71,7 @@ export const checkBonus = async (req: Request, res: Response) => {
     }
     res.send(mapToUserDto(user));
   } catch (e: any) {
+    console.log(e);
     res.status(400).send(e.message);
   }
 };

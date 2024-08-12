@@ -18,6 +18,8 @@ export const getUser = async (req: Request, res: Response) => {
     const user = await usersRepository.findOne({ where: { id: Number(req.params.id) } });
     res.send(user);
   } catch (e) {
+    console.log(e);
+
     res.send(e);
   }
 };
@@ -27,6 +29,8 @@ export const updateUser = async (req: Request, res: Response) => {
     const newUser = await usersRepository.save(req.body as User);
     res.send(newUser);
   } catch (e) {
+    console.log(e);
+
     res.send(e);
   }
 };
