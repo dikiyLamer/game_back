@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
+import { Dayly } from './dayly.entity';
+import { Boost } from './Boost.entity';
 
 @Entity()
 export class User {
@@ -16,4 +18,12 @@ export class User {
   allows_write_to_pm: boolean;
   @Column({ nullable: true })
   record: number;
+
+  @OneToOne(() => Dayly)
+  @JoinColumn()
+  dayly: Dayly;
+
+  @OneToOne(() => Boost)
+  @JoinColumn()
+  boost: Boost;
 }

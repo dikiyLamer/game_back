@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { refreshTokenNameInCookies } from '../constants/constants';
 import { AppDataSource } from '../db/config';
 import { Token } from '../entities/token.entity';
 import { User } from '../entities/user.entity';
@@ -14,7 +13,7 @@ export const login = async (req: Request, res: Response) => {
     // const searchParams = new URLSearchParams(req.query);
     // const data = Object.fromEntries(searchParams.entries());
     const data = JSON.parse(JSON.stringify(req.query));
-
+    const user = JSON.parse(data.user);
     const checkString = Object.keys(data)
       .filter((key) => key !== 'hash')
       .map((key) => `${key}=${data[key]}`)
@@ -35,35 +34,34 @@ export const login = async (req: Request, res: Response) => {
       const refreshToken = jwt.sign(data, process.env.JWT_SECRET ?? '', {
         expiresIn: '10m',
       });
-      console.log('data.user', data.user);
 
-      let newUser = await usersRepository.findOne({ where: { id: data.user.id } });
+      let newUser = await usersRepository.findOne({ where: { id: user.id } });
 
       if (!newUser) {
-        newUser = await usersRepository.save(data.user);
+        newUser = await usersRepository.save(user);
       }
       const newToken = new Token();
       newToken.token = refreshToken;
-      newToken.user = newUser!;
+      newToken.user_id = newUser!.id;
       await tokenRepository.save(newToken);
 
-      res.send({ accessToken });
+      res.send({ user: newUser, accessToken });
       return;
     }
     res.status(400).send('Неправильные данные');
   } catch (e) {
+    console.log(e);
+
     res.status(500).send(e);
   }
 };
 
 export const update = async (req: Request, res: Response) => {
   const data = JSON.parse(JSON.stringify(req.query));
+  const user = JSON.parse(data.user);
   const refreshToken = await tokenRepository.findOne({
-    where: { user: { id: data.user.id } },
-    relations: { user: true },
+    where: { user_id: user.id },
   });
-  console.log('user', data.user);
-  console.log('refreshToken', refreshToken);
 
   try {
     jwt.verify(refreshToken?.token ?? '', process.env.JWT_SECRET ?? '');
