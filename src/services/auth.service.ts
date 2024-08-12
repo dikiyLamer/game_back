@@ -28,11 +28,11 @@ export const login = async (req: Request, res: Response) => {
       const ttlRefresh = new Date(Date.now() + 1000 * 60 * 60 * 24);
 
       const accessToken = jwt.sign(data, process.env.JWT_SECRET ?? '', {
-        expiresIn: '1m',
+        expiresIn: '1h',
       });
 
       const refreshToken = jwt.sign(data, process.env.JWT_SECRET ?? '', {
-        expiresIn: '10m',
+        expiresIn: '1d',
       });
 
       let newUser = await usersRepository.findOne({ where: { id: user.id } });
@@ -65,7 +65,7 @@ export const update = async (req: Request, res: Response) => {
 
   try {
     jwt.verify(refreshToken?.token ?? '', process.env.JWT_SECRET ?? '');
-    const accessToken = jwt.sign(data, process.env.JWT_SECRET ?? '', { expiresIn: '1m' });
+    const accessToken = jwt.sign(data, process.env.JWT_SECRET ?? '', { expiresIn: '1h' });
     res.send({ accessToken });
   } catch (e) {
     console.log(e);

@@ -14,7 +14,6 @@ export const AuthMiddleware = (req: Request, res: Response, next: NextFunction) 
     jwt.verify(pureToken, process.env.JWT_SECRET ?? '');
   } catch (e) {
     console.log(e);
-
     if (e instanceof TokenExpiredError) {
       res.status(401).send('Token expired!');
       return;

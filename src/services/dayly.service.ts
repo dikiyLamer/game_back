@@ -45,7 +45,7 @@ export const checkBonus = async (req: Request, res: Response) => {
       user.dayly = dayly;
       user.boost = boost;
       await usersRepository.save(user);
-      res.send(user);
+      res.send(mapToUserDto(user, true));
       return;
     }
 
@@ -76,8 +76,19 @@ export const checkBonus = async (req: Request, res: Response) => {
   }
 };
 
-export const mapToUserDto = (user: User): UserDto => {
+export const mapToUserDto = (user: User, isNew: boolean = false): UserDto => {
   const newUser: UserDto = user;
+  if (isNew) {
+    newUser.todayBoost = {
+      id: 0,
+      boosts_moveboss: DAYLY_REWARDS[0].boosts_moveboss,
+      boosts_powerwisps: DAYLY_REWARDS[0].boosts_powerwisps,
+      boosts_remove: DAYLY_REWARDS[0].boosts_remove,
+      boosts_repaint: DAYLY_REWARDS[0].boosts_repaint,
+      boosts_upgrade: DAYLY_REWARDS[0].boosts_upgrade,
+    };
+    return newUser;
+  }
   newUser.todayBoost = {
     id: 0,
     boosts_moveboss: DAYLY_REWARDS[user.dayly.daysStreak % 10].boosts_moveboss,
