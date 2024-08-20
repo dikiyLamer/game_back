@@ -1,5 +1,4 @@
-import { Request, Response } from 'express';
-import { AppDataSource } from '../db/config';
+import { Request, Response } from 'express';import { AppDataSource } from '../db/config';
 import { User } from '../entities/user.entity';
 import moment from 'moment';
 import { Dayly } from '../entities/dayly.entity';
@@ -52,23 +51,31 @@ export const checkBonus = async (req: Request, res: Response) => {
     const clientDate = moment(date, 'YYYY-MM-DD');
     const serverDate = moment(user.dayly.lastEntry, 'YYYY-MM-DD');
     const diff = clientDate.diff(serverDate);
+    const dayly = user.dayly;
+    const boost = user.boost;
+    dayly.lastEntry = date;
+    if (!boost) {
+      return;
+    }
 
     if (diff / 24 / 60 / 60 / 1000 === 1) {
-      const dayly = user.dayly;
-      const boost = user.boost;
       dayly.daysStreak += 1;
-      dayly.lastEntry = date;
-      if (!boost) {
-        return;
-      }
       boost.boosts_moveboss += DAYLY_REWARDS[dayly.daysStreak % 10].boosts_moveboss;
       boost.boosts_powerwisps += DAYLY_REWARDS[dayly.daysStreak % 10].boosts_powerwisps;
       boost.boosts_remove += DAYLY_REWARDS[dayly.daysStreak % 10].boosts_remove;
       boost.boosts_repaint += DAYLY_REWARDS[dayly.daysStreak % 10].boosts_repaint;
       boost.boosts_upgrade += DAYLY_REWARDS[dayly.daysStreak % 10].boosts_upgrade;
-      await daylyRepository.save(dayly);
-      await boostRepository.save(boost);
+    } else {
+      dayly.daysStreak = 1;
+      boost.boosts_moveboss += DAYLY_REWARDS[0].boosts_moveboss;
+      boost.boosts_powerwisps += DAYLY_REWARDS[0].boosts_powerwisps;
+      boost.boosts_remove += DAYLY_REWARDS[0].boosts_remove;
+      boost.boosts_repaint += DAYLY_REWARDS[0].boosts_repaint;
+      boost.boosts_upgrade += DAYLY_REWARDS[0].boosts_upgrade;
     }
+
+    await daylyRepository.save(dayly);
+    await boostRepository.save(boost);
     res.send(mapToUserDto(user));
   } catch (e: any) {
     console.log(e);
